@@ -1,0 +1,116 @@
+db.products.insertMany([
+    {
+        name: "Iphone",
+        price: 80000,
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique ea, molestiae vel vero molestias animi illum saepe quam maxime libero architecto officia, quibusdam deleniti tenetur voluptate dolorum impedit nemo odit.",
+        imageUrl: "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGlwaG9uZXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        name: "MacBook",
+        price: 120000,
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique ea, molestiae vel vero molestias animi illum saepe quam maxime libero architecto officia, quibusdam deleniti tenetur voluptate dolorum impedit nemo odit.",
+        imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFjYm9va3xlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        name: "HeadPhone",
+        price: 3000,
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique ea, molestiae vel vero molestias animi illum saepe quam maxime libero architecto officia, quibusdam deleniti tenetur voluptate dolorum impedit nemo odit.",
+        imageUrl: "https://images.unsplash.com/photo-1585298723682-7115561c51b7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhlYWRwaG9uZXN8ZW58MHx8MHx8fDA%3D"
+    },
+    {
+        name: "Shirt",
+        price: 499,
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique ea, molestiae vel vero molestias animi illum saepe quam maxime libero architecto officia, quibusdam deleniti tenetur voluptate dolorum impedit nemo odit.",
+        imageUrl: "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHNoaXJ0fGVufDB8fDB8fHww"
+    },
+    {
+        name: "Washing Machine",
+        price: 12000,
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique ea, molestiae vel vero molestias animi illum saepe quam maxime libero architecto officia, quibusdam deleniti tenetur voluptate dolorum impedit nemo odit.",
+        imageUrl: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    }
+])
+db.products.insertOne([
+    {
+      "name": "watch",
+       " price": 12000,
+        "desc": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique ea, molestiae vel vero molestias animi illum saepe quam maxime libero architecto officia, quibusdam deleniti tenetur voluptate dolorum impedit nemo odit.",
+        "imageUrl":"https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d2F0Y2h8ZW58MHx8MHx8fDA%3D " 
+    }
+])
+
+
+//
+
+
+import React, { Fragment, useContext } from 'react';
+import { Box } from '@mui/material';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
+import { Button } from '@mui/material';
+import CartContext from '../store/card-context';
+import { placeOrder } from '../lib/apis';
+import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
+
+const Cart = () => {
+
+  const { cart, clearCart } = useContext(CartContext);
+  const placeOrderMutation = useMutation(placeOrder);
+
+  const placeOrderHandler = () => {
+    console.log(placeOrderMutation.mutate(cart));
+    toast.success('Order Placed Successfully', {
+      position: 'top-left'
+    })
+    clearCart();
+  }
+
+  if (placeOrderMutation.isError) {
+    return <p>Error in placing the order</p>
+  }
+
+  return (
+    <Fragment>
+      <Box sx={{ width: '360px', margin:'5px auto', mt: 5}}>
+        <Typography variant='h5' component="h1">My Cart</Typography>
+        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+          {
+              cart.map((item) => {
+                return (
+                  <Fragment key={item.id}>
+                      <ListItem alignItems="flex-start">
+                  
+                        <ListItemText
+                          primary={`${item.productName} x ${item.qty}`} 
+                          secondary={
+                            <React.Fragment>
+                              <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                              </Typography>
+                              Rs. {item.price} 
+                            </React.Fragment>
+                          }
+                        />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                </Fragment>
+                )
+              })
+          }
+        </List>
+        <Typography variant='h6' component="h6"> Total : Rs. { cart.reduce((total, item)=> total + item.price * item.qty, 0) }</Typography>
+        <Button variant="outlined" size="small" onClick={placeOrderHandler}>Place Order</Button>
+     </Box>
+    </Fragment>
+  )
+}
+
+export default Cart;
