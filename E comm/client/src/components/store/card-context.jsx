@@ -25,12 +25,12 @@ export const CartContextProvider = (props) => {
         setCart(() => []);
     }
 
-   /* 
+   
  //for save cart in localstorage...
 
    useEffect(() => {
         window.localStorage.setItem('cart', JSON.stringify(cart));
-    }, [cart]);*/
+    }, [cart]);
 
 
     console.log(cart);
