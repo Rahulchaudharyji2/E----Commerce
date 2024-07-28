@@ -34,7 +34,7 @@ router.post('/products', catchAsync(async (req, res) => {
 }));
 
 //get food by id
-router.get('/products/:productId', catchAsync(async (req, res) => {
+/*router.get('/products/:productId', catchAsync(async (req, res) => {
     const { productId } = req.params;
     try {
         const product = await Product.findById(productId);
@@ -45,8 +45,32 @@ router.get('/products/:productId', catchAsync(async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
-}));
+})); */
+//get product by name
+router.get('/products/search', async (req, res) => {
+  const { query } = req.query;
+  try {
+    const products = await Product.find({ name: new RegExp(query, 'i') });
+    res.json(products);
+  } catch (err) {
+    console.error('Error searching products:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
+
+/*router.get('/products/:name', async     (req, res) => {
+  
+    try {
+      const product = await Product.findOne({ name: req.params.name });
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      res.status(200).json(product);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }); */
 // Update a Food
 router.patch('/products/:productId', catchAsync(async (req, res) => {
     const { productId } = req.params;

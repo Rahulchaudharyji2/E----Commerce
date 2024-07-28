@@ -70,6 +70,7 @@ const Cart = () => {
       theme: {
         color: "#3399cc"
       } */
+     
     };
 
     const paymentObject = new window.Razorpay(options);
@@ -100,7 +101,7 @@ const Cart = () => {
             </Fragment>
           ))}
         </List>
-        <Typography variant='h6' component="h6">Total: Rs. {cart.reduce((total, item) => total + item.price * item.qty, 0) + deliveryCharge}</Typography>
+        <Typography variant='h6' component="h6">Total: Rs. {cart.reduce((total, item) => total + item.price * item.qty, 0) }</Typography>
         <Button variant="outlined" size="small" onClick={displayRazorpay}>Place Order</Button>
       </Box>
     </>
